@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ungranary.mapper.ProcessedProjectMapper">
+    
+    <resultMap type="ProcessedProject" id="ProcessedProjectResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="processedTimeline"    column="processed_timeline"    />
+        <result property="transportationTimeliness"    column="transportation_timeliness"    />
+    </resultMap>
+
+    <sql id="selectProcessedProjectVo">
+        select id, name, capacity, processed_timeline, transportation_timeliness from processed_project
+    </sql>
+
+    <select id="selectProcessedProjectList" parameterType="ProcessedProject" resultMap="ProcessedProjectResult">
+        <include refid="selectProcessedProjectVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+            <if test="processedTimeline != null "> and processed_timeline = #{processedTimeline}</if>
+            <if test="transportationTimeliness != null "> and transportation_timeliness = #{transportationTimeliness}</if>
+        </where>
+    </select>
+    
+    <select id="selectProcessedProjectById" parameterType="Long" resultMap="ProcessedProjectResult">
+        <include refid="selectProcessedProjectVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertProcessedProject" parameterType="ProcessedProject" useGeneratedKeys="true" keyProperty="id">
+        insert into processed_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="processedTimeline != null">processed_timeline,</if>
+            <if test="transportationTimeliness != null">transportation_timeliness,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="processedTimeline != null">#{processedTimeline},</if>
+            <if test="transportationTimeliness != null">#{transportationTimeliness},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProcessedProject" parameterType="ProcessedProject">
+        update processed_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="processedTimeline != null">processed_timeline = #{processedTimeline},</if>
+            <if test="transportationTimeliness != null">transportation_timeliness = #{transportationTimeliness},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProcessedProjectById" parameterType="Long">
+        delete from processed_project where id = #{id}
+    </delete>
+
+    <delete id="deleteProcessedProjectByIds" parameterType="String">
+        delete from processed_project where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

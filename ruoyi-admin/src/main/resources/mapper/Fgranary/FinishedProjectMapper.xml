@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.Fgranary.mapper.FinishedProjectMapper">
+    
+    <resultMap type="FinishedProject" id="FinishedProjectResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="transportationTimeliness"    column="transportation_timeliness"    />
+    </resultMap>
+
+    <sql id="selectFinishedProjectVo">
+        select id, name, capacity, transportation_timeliness from finished_project
+    </sql>
+
+    <select id="selectFinishedProjectList" parameterType="FinishedProject" resultMap="FinishedProjectResult">
+        <include refid="selectFinishedProjectVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+            <if test="transportationTimeliness != null "> and transportation_timeliness = #{transportationTimeliness}</if>
+        </where>
+    </select>
+    
+    <select id="selectFinishedProjectById" parameterType="Long" resultMap="FinishedProjectResult">
+        <include refid="selectFinishedProjectVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFinishedProject" parameterType="FinishedProject" useGeneratedKeys="true" keyProperty="id">
+        insert into finished_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="transportationTimeliness != null">transportation_timeliness,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="transportationTimeliness != null">#{transportationTimeliness},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFinishedProject" parameterType="FinishedProject">
+        update finished_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="transportationTimeliness != null">transportation_timeliness = #{transportationTimeliness},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFinishedProjectById" parameterType="Long">
+        delete from finished_project where id = #{id}
+    </delete>
+
+    <delete id="deleteFinishedProjectByIds" parameterType="String">
+        delete from finished_project where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
